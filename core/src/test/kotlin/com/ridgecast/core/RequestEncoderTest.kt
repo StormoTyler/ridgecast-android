@@ -36,17 +36,17 @@ class RequestEncoderTest {
     }
 
     @Test
-    fun `each option sets only its own bit`() {
+    fun `each option sets only its own bitIndex`() {
         for (option in RequestOption.entries) {
             val request = base.copy(options = setOf(option), trackerHours = 24, trackerName = "Camp")
             val flags = encodeRequest(request).split(" ")[3]
-            assertEquals(String.format(Locale.US, "%04X", 1 shl option.bit), flags, option.name)
+            assertEquals(String.format(Locale.US, "%04X", 1 shl option.bitIndex), flags, option.name)
         }
     }
 
     @Test
     fun `options use bits 0 to 13 once each`() {
-        assertEquals((0..13).toList(), RequestOption.entries.map { it.bit }.sorted())
+        assertEquals((0..13).toList(), RequestOption.entries.map { it.bitIndex }.sorted())
         assertEquals(RequestOption.entries.size, RequestOption.entries.map { it.fieldName }.toSet().size)
         assertEquals(0x3FFF, base.copy(options = RequestOption.entries.toSet()).flagBits)
     }

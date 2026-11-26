@@ -3,11 +3,11 @@ package com.ridgecast.core.request
 /**
  * The 14 on/off options packed into the flags field of a request.
  *
- * [bit] is the bit position from docs/sms-format.md in ridgecast-server (bit 0 is the least
+ * [bitIndex] is the bit position from docs/sms-format.md in ridgecast-server (bit 0 is the least
  * significant). [fieldName] is the matching `ForecastVars` field in the server's `src/models.rs`,
  * which the shared test fixtures also use, so all three codebases name the options the same way.
  */
-enum class RequestOption(val bit: Int, val fieldName: String, val isTracker: Boolean = false) {
+enum class RequestOption(val bitIndex: Int, val fieldName: String, val isTracker: Boolean = false) {
     TRACK_ALERTS(0, "track_alerts", isTracker = true),
     NO_FORECAST(1, "no_forecast"),
     TRACK_AVY(2, "track_avy", isTracker = true),
@@ -24,7 +24,7 @@ enum class RequestOption(val bit: Int, val fieldName: String, val isTracker: Boo
     DAILY_FORECAST(13, "daily_forecast", isTracker = true),
     ;
 
-    val mask: Int get() = 1 shl bit
+    val mask: Int get() = 1 shl bitIndex
 
     companion object {
         /** The forecast properties that [NO_FORECAST] makes meaningless. */
