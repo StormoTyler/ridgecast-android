@@ -1,0 +1,29 @@
+{
+  "description": "Known places and the US time zone each is in, or null for a place outside US coverage. Shared by the Android and iOS apps, whose time zone lookup must give these results from shared/timezones/us-timezones.json, and by shared/tools/build_timezones.py, which checks every build against them.",
+  "format_version": 1,
+  "cases": [
+    { "name": "Seattle", "latitude": 47.6062, "longitude": -122.3321, "zone": "America/Los_Angeles" },
+    { "name": "20 km off the Oregon coast", "latitude": 44.6, "longitude": -124.35, "zone": "America/Los_Angeles" },
+    { "name": "Mt Hood", "latitude": 45.3735, "longitude": -121.6959, "zone": "America/Los_Angeles" },
+    { "name": "Denver", "latitude": 39.7392, "longitude": -104.9903, "zone": "America/Denver" },
+    { "name": "Phoenix (no daylight saving time)", "latitude": 33.4484, "longitude": -112.0740, "zone": "America/Phoenix" },
+    { "name": "Window Rock, Navajo Nation (observes daylight saving time)", "latitude": 35.6803, "longitude": -109.0526, "zone": "America/Denver" },
+    { "name": "Boise", "latitude": 43.6150, "longitude": -116.2023, "zone": "America/Boise" },
+    { "name": "Coeur d'Alene, Idaho panhandle", "latitude": 47.6777, "longitude": -116.7805, "zone": "America/Los_Angeles" },
+    { "name": "Chicago", "latitude": 41.8781, "longitude": -87.6298, "zone": "America/Chicago" },
+    { "name": "Indianapolis", "latitude": 39.7684, "longitude": -86.1581, "zone": "America/Indiana/Indianapolis" },
+    { "name": "New York", "latitude": 40.7128, "longitude": -74.0060, "zone": "America/New_York" },
+    { "name": "Anchorage", "latitude": 61.2181, "longitude": -149.9003, "zone": "America/Anchorage" },
+    { "name": "Adak", "latitude": 51.88, "longitude": -176.65, "zone": "America/Adak" },
+    { "name": "Semisopochnoi Island, east of 180", "latitude": 51.95, "longitude": 179.6, "zone": "America/Adak" },
+    { "name": "Honolulu", "latitude": 21.3069, "longitude": -157.8583, "zone": "Pacific/Honolulu" },
+    { "name": "San Juan", "latitude": 18.4655, "longitude": -66.1057, "zone": "America/Puerto_Rico" },
+    { "name": "Charlotte Amalie, St. Thomas", "latitude": 18.3419, "longitude": -64.9307, "zone": "America/St_Thomas" },
+    { "name": "Hagatna, Guam", "latitude": 13.4757, "longitude": 144.7489, "zone": "Pacific/Guam" },
+    { "name": "Saipan", "latitude": 15.1850, "longitude": 145.7467, "zone": "Pacific/Saipan" },
+    { "name": "Pago Pago", "latitude": -14.2756, "longitude": -170.7020, "zone": "Pacific/Pago_Pago" },
+    { "name": "Vancouver, BC", "latitude": 49.2827, "longitude": -123.1207, "zone": null },
+    { "name": "Tijuana, Mexico", "latitude": 32.5149, "longitude": -117.0382, "zone": null },
+    { "name": "Open Pacific", "latitude": 30.0, "longitude": -140.0, "zone": null }
+  ]
+}

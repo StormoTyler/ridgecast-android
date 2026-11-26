@@ -9,3 +9,7 @@ captures/
 .cxx/
 *.apk
 *.aab
+
+# Python environment for shared/tools
+.venv-tools/
+__pycache__/
