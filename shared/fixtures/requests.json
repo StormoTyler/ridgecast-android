@@ -1,0 +1,151 @@
+{
+  "description": "RidgeCast SMS request encoding cases shared by the Android and iOS apps. Each request must encode to exactly its message. Fields left out of a request take these defaults: options [], tracker_hours 0, forecast_days 1, tracker_name null. Option names are the ForecastVars field names in ridgecast-server src/models.rs. The apps send at most 3 forecast days, although the server accepts up to 7.",
+  "format_version": 1,
+  "cases": [
+    {
+      "name": "spec: 1-day forecast only, no optional fields",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "forecast_days": 1 },
+      "message": "RC1 44.0512 -123.0921 0000 0 1"
+    },
+    {
+      "name": "3-day forecast, the most the apps send",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "forecast_days": 3 },
+      "message": "RC1 44.0512 -123.0921 0000 0 3"
+    },
+    {
+      "name": "spec: brief 2-day forecast only",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "options": ["brief"], "forecast_days": 2 },
+      "message": "RC1 44.0512 -123.0921 1000 0 2"
+    },
+    {
+      "name": "spec: track alerts for 24 hours, no forecast",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts", "no_forecast"],
+        "tracker_hours": 24, "forecast_days": 1, "tracker_name": "Spencer"
+      },
+      "message": "RC1 44.0512 -123.0921 0003 24 1 Spencer"
+    },
+    {
+      "name": "spec: alerts and avalanche for 72 hours, brief 2-day forecast, humidity, wind gust",
+      "request": {
+        "latitude": 45.3735, "longitude": -121.6959,
+        "options": ["track_alerts", "track_avy", "relative_humidity", "wind_gust", "brief"],
+        "tracker_hours": 72, "forecast_days": 2, "tracker_name": "Mt Hood"
+      },
+      "message": "RC1 45.3735 -121.6959 1845 72 2 Mt Hood"
+    },
+    {
+      "name": "spec: track alerts for one week, 3-day forecast, visibility, snow level, wind gust",
+      "request": {
+        "latitude": 39.1968, "longitude": -120.2354,
+        "options": ["track_alerts", "visibility", "snow_level", "wind_gust"],
+        "tracker_hours": 168, "forecast_days": 3, "tracker_name": "Tahoe"
+      },
+      "message": "RC1 39.1968 -120.2354 0C81 168 3 Tahoe"
+    },
+    {
+      "name": "spec: daily forecast for 72 hours, brief 1-day forecast",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["daily_forecast", "brief"],
+        "tracker_hours": 72, "forecast_days": 1, "tracker_name": "Camp"
+      },
+      "message": "RC1 44.0512 -123.0921 3000 72 1 Camp"
+    },
+    {
+      "name": "spec: every option on (the spec's example sends length 7, but no_forecast is on, so 1 is sent)",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": [
+          "track_alerts", "no_forecast", "track_avy", "elevation", "wet_bulb_globe_temperature",
+          "heat_risk", "relative_humidity", "visibility", "ceiling_height", "pressure",
+          "snow_level", "wind_gust", "brief", "daily_forecast"
+        ],
+        "tracker_hours": 24, "forecast_days": 7, "tracker_name": "Camp"
+      },
+      "message": "RC1 44.0512 -123.0921 3FFF 24 1 Camp"
+    },
+    {
+      "name": "longest possible message is 44 characters",
+      "request": {
+        "latitude": -90, "longitude": -180,
+        "options": [
+          "track_alerts", "no_forecast", "track_avy", "elevation", "wet_bulb_globe_temperature",
+          "heat_risk", "relative_humidity", "visibility", "ceiling_height", "pressure",
+          "snow_level", "wind_gust", "brief", "daily_forecast"
+        ],
+        "tracker_hours": 168, "tracker_name": "ABCDEFGHIJ"
+      },
+      "message": "RC1 -90.0000 -180.0000 3FFF 168 1 ABCDEFGHIJ"
+    },
+    {
+      "name": "coordinates with fewer than 4 decimals are padded",
+      "request": { "latitude": 44.5, "longitude": -123 },
+      "message": "RC1 44.5000 -123.0000 0000 0 1"
+    },
+    {
+      "name": "coordinates round half up, away from zero",
+      "request": { "latitude": 44.05125, "longitude": -123.09215 },
+      "message": "RC1 44.0513 -123.0922 0000 0 1"
+    },
+    {
+      "name": "coordinates with more than 4 decimals are rounded",
+      "request": { "latitude": 44.051249, "longitude": -123.092149 },
+      "message": "RC1 44.0512 -123.0921 0000 0 1"
+    },
+    {
+      "name": "a latitude that rounds to 90 is allowed",
+      "request": { "latitude": 89.99996, "longitude": -150 },
+      "message": "RC1 90.0000 -150.0000 0000 0 1"
+    },
+    {
+      "name": "a negative value that rounds to zero has no sign",
+      "request": { "latitude": -0.00001, "longitude": -0.00004 },
+      "message": "RC1 0.0000 0.0000 0000 0 1"
+    },
+    {
+      "name": "duration is sent as 0 without a tracker option",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "tracker_hours": 48, "forecast_days": 2 },
+      "message": "RC1 44.0512 -123.0921 0000 0 2"
+    },
+    {
+      "name": "name is left out without a tracker option",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "tracker_name": "Camp" },
+      "message": "RC1 44.0512 -123.0921 0000 0 1"
+    },
+    {
+      "name": "forecast length is sent as 1 with no_forecast",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_avy", "no_forecast"],
+        "tracker_hours": 48, "forecast_days": 5, "tracker_name": "Bowl"
+      },
+      "message": "RC1 44.0512 -123.0921 0006 48 1 Bowl"
+    },
+    {
+      "name": "name is trimmed and runs of spaces become one",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "  Mt    Hood  "
+      },
+      "message": "RC1 44.0512 -123.0921 0001 24 1 Mt Hood"
+    },
+    {
+      "name": "name with every allowed punctuation character",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 1, "tracker_name": "A-'.#&()/Z"
+      },
+      "message": "RC1 44.0512 -123.0921 0001 1 1 A-'.#&()/Z"
+    },
+    {
+      "name": "daily forecast under 24 hours still encodes (the app warns but does not block)",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["daily_forecast"], "tracker_hours": 12, "forecast_days": 1, "tracker_name": "Camp"
+      },
+      "message": "RC1 44.0512 -123.0921 2000 12 1 Camp"
+    }
+  ]
+}

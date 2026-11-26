@@ -1,0 +1,118 @@
+{
+  "description": "RidgeCast SMS requests that must not be encoded, shared by the Android and iOS apps. Each must be rejected, naming its field. Defaults and option names are as in requests.json. Most cases are rejected by the server too; forecast lengths 4 to 7 are accepted by the server but over the apps' 3-day cap.",
+  "format_version": 1,
+  "cases": [
+    {
+      "name": "latitude above 90",
+      "request": { "latitude": 90.0001, "longitude": -123.0921 },
+      "field": "latitude"
+    },
+    {
+      "name": "latitude below -90",
+      "request": { "latitude": -91, "longitude": -123.0921 },
+      "field": "latitude"
+    },
+    {
+      "name": "longitude that rounds to just over 180",
+      "request": { "latitude": 44.0512, "longitude": 180.00005 },
+      "field": "longitude"
+    },
+    {
+      "name": "longitude below -180",
+      "request": { "latitude": 44.0512, "longitude": -180.0001 },
+      "field": "longitude"
+    },
+    {
+      "name": "tracker duration 0 with a tracker option",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 0, "tracker_name": "Camp"
+      },
+      "field": "tracker_hours"
+    },
+    {
+      "name": "tracker duration over 168",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_avy"], "tracker_hours": 169, "tracker_name": "Camp"
+      },
+      "field": "tracker_hours"
+    },
+    {
+      "name": "forecast length 0",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "forecast_days": 0 },
+      "field": "forecast_days"
+    },
+    {
+      "name": "forecast length 4, over the apps' 3-day cap (the server accepts it)",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "forecast_days": 4 },
+      "field": "forecast_days"
+    },
+    {
+      "name": "forecast length 5, the spec's 5-day example, over the apps' cap",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "forecast_days": 5 },
+      "field": "forecast_days"
+    },
+    {
+      "name": "forecast length 8",
+      "request": { "latitude": 44.0512, "longitude": -123.0921, "forecast_days": 8 },
+      "field": "forecast_days"
+    },
+    {
+      "name": "tracker option with no name",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["daily_forecast"], "tracker_hours": 48
+      },
+      "field": "tracker_name"
+    },
+    {
+      "name": "tracker option with a name of only spaces",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "   "
+      },
+      "field": "tracker_name"
+    },
+    {
+      "name": "name over 10 characters after collapsing spaces",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "Mt   Jefferson"
+      },
+      "field": "tracker_name"
+    },
+    {
+      "name": "name with a smart apostrophe",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "Bob’s"
+      },
+      "field": "tracker_name"
+    },
+    {
+      "name": "name with an accented letter",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "Café"
+      },
+      "field": "tracker_name"
+    },
+    {
+      "name": "name with an emoji",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "Camp 🏕"
+      },
+      "field": "tracker_name"
+    },
+    {
+      "name": "name with an underscore",
+      "request": {
+        "latitude": 44.0512, "longitude": -123.0921,
+        "options": ["track_alerts"], "tracker_hours": 24, "tracker_name": "Camp_2"
+      },
+      "field": "tracker_name"
+    }
+  ]
+}
