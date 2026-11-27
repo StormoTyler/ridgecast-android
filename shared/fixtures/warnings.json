@@ -1,0 +1,126 @@
+{
+  "description": "Request warning cases shared by the Android and iOS apps. Each request, sent at now from a location in zone, must give exactly these warnings. zone is the location's time zone id, or null for a location outside US coverage; zone_unknown true means the app could not tell, as before the time zone data has loaded. The daily forecast warning: take the first 6:00 AM in the location's zone after now (at exactly 6:00 AM, the next day's); warn if now plus tracker_hours is before it. now stands for when the tracker starts, since the apps cannot know when a request will reach the server. now is written in the location's local offset to keep the cases readable. Request fields are as in requests.json; the latitude and longitude are only for reference, since zone is given.",
+  "format_version": 1,
+  "cases": [
+    {
+      "name": "no tracker: no warnings",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "forecast_days": 2 },
+      "now": "2026-06-15T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "an alerts tracker for 1 hour, without the daily forecast: no warnings",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["track_alerts"], "tracker_hours": 1, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "24 hours from 6 PM reaches the next 6 AM",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 24, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "12 hours from 6 PM ends exactly at 6 AM, which counts",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 12, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "11 hours from 6 PM ends at 5 AM",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 11, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": ["daily_forecast_may_miss"]
+    },
+    {
+      "name": "at 5:59 AM, 1 hour reaches today's 6 AM",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 1, "tracker_name": "Camp" },
+      "now": "2026-06-15T05:59:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "at exactly 6:00 AM, today's forecast is due now, so 23 hours misses tomorrow's",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 23, "tracker_name": "Camp" },
+      "now": "2026-06-15T06:00:00-06:00", "zone": "America/Denver",
+      "warnings": ["daily_forecast_may_miss"]
+    },
+    {
+      "name": "at exactly 6:00 AM, 24 hours reaches tomorrow's 6 AM",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 24, "tracker_name": "Camp" },
+      "now": "2026-06-15T06:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "168 hours, the longest tracker, with alerts and avalanche too",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["track_alerts", "track_avy", "daily_forecast"], "tracker_hours": 168, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "the night clocks spring forward, 11 hours from 6 PM MST reaches 6 AM MDT",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 11, "tracker_name": "Camp" },
+      "now": "2026-03-07T18:00:00-07:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "the night clocks spring forward, 10 hours from 6 PM MST ends at 5 AM MDT",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 10, "tracker_name": "Camp" },
+      "now": "2026-03-07T18:00:00-07:00", "zone": "America/Denver",
+      "warnings": ["daily_forecast_may_miss"]
+    },
+    {
+      "name": "the night clocks fall back, 12 hours from 6 PM MDT ends at 5 AM MST",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 12, "tracker_name": "Camp" },
+      "now": "2026-10-31T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": ["daily_forecast_may_miss"]
+    },
+    {
+      "name": "the night clocks fall back, 13 hours from 6 PM MDT reaches 6 AM MST",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 13, "tracker_name": "Camp" },
+      "now": "2026-10-31T18:00:00-06:00", "zone": "America/Denver",
+      "warnings": []
+    },
+    {
+      "name": "Phoenix stays on standard time: the night Denver springs forward, 11 hours from 6 PM ends at 5 AM",
+      "request": { "latitude": 33.4484, "longitude": -112.0740, "options": ["daily_forecast"], "tracker_hours": 11, "tracker_name": "Camp" },
+      "now": "2026-03-07T18:00:00-07:00", "zone": "America/Phoenix",
+      "warnings": ["daily_forecast_may_miss"]
+    },
+    {
+      "name": "the location's zone counts, not the phone's: 11 hours from midnight in New York reaches 6 AM",
+      "request": { "latitude": 40.7128, "longitude": -74.0060, "options": ["daily_forecast"], "tracker_hours": 11, "tracker_name": "Camp" },
+      "now": "2026-07-01T00:00:00-04:00", "zone": "America/New_York",
+      "warnings": []
+    },
+    {
+      "name": "the location's zone counts, not the phone's: the same moment in Honolulu is 6 PM, and 11 hours misses",
+      "request": { "latitude": 21.3069, "longitude": -157.8583, "options": ["daily_forecast"], "tracker_hours": 11, "tracker_name": "Camp" },
+      "now": "2026-06-30T18:00:00-10:00", "zone": "Pacific/Honolulu",
+      "warnings": ["daily_forecast_may_miss"]
+    },
+    {
+      "name": "Guam, west of the date line: at 5 AM local, 1 hour reaches today's 6 AM",
+      "request": { "latitude": 13.4757, "longitude": 144.7489, "options": ["daily_forecast"], "tracker_hours": 1, "tracker_name": "Camp" },
+      "now": "2026-07-02T05:00:00+10:00", "zone": "Pacific/Guam",
+      "warnings": []
+    },
+    {
+      "name": "outside coverage",
+      "request": { "latitude": 49.2827, "longitude": -123.1207, "forecast_days": 2 },
+      "now": "2026-06-15T18:00:00-07:00", "zone": null,
+      "warnings": ["outside_coverage"]
+    },
+    {
+      "name": "outside coverage, the daily forecast check is skipped: there is no US time zone to find 6 AM in",
+      "request": { "latitude": 49.2827, "longitude": -123.1207, "options": ["daily_forecast"], "tracker_hours": 1, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-07:00", "zone": null,
+      "warnings": ["outside_coverage"]
+    },
+    {
+      "name": "zone unknown, as before the time zone data has loaded: no warnings, even for a 1-hour daily forecast tracker",
+      "request": { "latitude": 39.7392, "longitude": -104.9903, "options": ["daily_forecast"], "tracker_hours": 1, "tracker_name": "Camp" },
+      "now": "2026-06-15T18:00:00-06:00", "zone": null, "zone_unknown": true,
+      "warnings": []
+    }
+  ]
+}

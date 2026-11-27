@@ -4,7 +4,11 @@ import com.ridgecast.core.request.encodeRequest
 import com.ridgecast.core.request.InvalidRequestException
 import com.ridgecast.core.request.Request
 import com.ridgecast.core.request.RequestOption
+import com.ridgecast.core.request.RequestWarning
+import com.ridgecast.core.request.requestWarnings
+import com.ridgecast.core.timezone.LocationZone
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.int
@@ -16,8 +20,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
+import java.time.OffsetDateTime
+import java.time.ZoneId
 
-/** Runs the request fixtures in shared/fixtures, which the iOS app runs too. */
+/** Runs the request and warning fixtures in shared/fixtures, which the iOS app runs too. */
 class SharedFixtureTest {
 
     @TestFactory
@@ -49,12 +55,30 @@ class SharedFixtureTest {
             }
         }
 
+    @TestFactory
+    fun `requests give their warnings`(): List<DynamicTest> =
+        cases("warnings.json").map { case ->
+            DynamicTest.dynamicTest(case.name) {
+                val now = OffsetDateTime.parse(case.json.getValue("now").jsonPrimitive.content).toInstant()
+                val expected = case.json.getValue("warnings").jsonArray
+                    .map { RequestWarning.valueOf(it.jsonPrimitive.content.uppercase()) }.toSet()
+                assertEquals(expected, requestWarnings(case.request, now, locationZone(case.json)))
+            }
+        }
+
     private class Case(val name: String, val request: Request, val json: JsonObject)
 
     private fun cases(fileName: String): List<Case> =
         fixtureCases(fileName).map { case ->
             Case(case.getValue("name").jsonPrimitive.content, parseRequest(case.getValue("request").jsonObject), case)
         }
+
+    /** The case's location zone: zone_unknown, else zone, with null meaning outside coverage. */
+    private fun locationZone(json: JsonObject): LocationZone {
+        if (json["zone_unknown"]?.jsonPrimitive?.boolean == true) return LocationZone.Unknown
+        val id = json.getValue("zone").jsonPrimitive.contentOrNull ?: return LocationZone.OutsideCoverage
+        return LocationZone.InZone(ZoneId.of(id))
+    }
 
     private fun parseRequest(json: JsonObject) = Request(
         latitude = json.getValue("latitude").jsonPrimitive.double,
