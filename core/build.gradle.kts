@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 java {
@@ -16,18 +17,21 @@ kotlin {
 }
 
 dependencies {
+    // parses the time zone data; the tests also use it to read the shared fixtures
+    implementation(libs.kotlinx.serialization.json)
+
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
-    // reads the shared JSON fixtures; tests only, so the app does not ship it
-    testImplementation(libs.kotlinx.serialization.json)
 }
 
-// the request fixtures shared with the iOS app
-val sharedFixtures = rootProject.layout.projectDirectory.dir("shared/fixtures")
+// the fixtures and time zone data shared with the iOS app
+val shared = rootProject.layout.projectDirectory.dir("shared")
 
 tasks.test {
     useJUnitPlatform()
-    inputs.dir(sharedFixtures).withPropertyName("sharedFixtures").withPathSensitivity(PathSensitivity.RELATIVE)
-    systemProperty("ridgecast.fixtures", sharedFixtures.asFile.absolutePath)
+    // rerun the tests when the shared files change, not only when the Kotlin does
+    inputs.dir(shared.dir("fixtures")).withPropertyName("sharedFixtures").withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(shared.dir("timezones")).withPropertyName("sharedTimeZones").withPathSensitivity(PathSensitivity.RELATIVE)
+    systemProperty("ridgecast.shared", shared.asFile.absolutePath)
 }

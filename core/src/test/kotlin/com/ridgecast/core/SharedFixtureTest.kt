@@ -4,7 +4,6 @@ import com.ridgecast.core.request.encodeRequest
 import com.ridgecast.core.request.InvalidRequestException
 import com.ridgecast.core.request.Request
 import com.ridgecast.core.request.RequestOption
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.double
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
-import java.io.File
 
 /** Runs the request fixtures in shared/fixtures, which the iOS app runs too. */
 class SharedFixtureTest {
@@ -53,15 +51,10 @@ class SharedFixtureTest {
 
     private class Case(val name: String, val request: Request, val json: JsonObject)
 
-    private fun cases(fileName: String): List<Case> {
-        val dir = System.getProperty("ridgecast.fixtures")
-            ?: error("ridgecast.fixtures is not set; run the tests through Gradle")
-        val root = Json.parseToJsonElement(File(dir, fileName).readText()).jsonObject
-        return root.getValue("cases").jsonArray.map { element ->
-            val case = element.jsonObject
+    private fun cases(fileName: String): List<Case> =
+        fixtureCases(fileName).map { case ->
             Case(case.getValue("name").jsonPrimitive.content, parseRequest(case.getValue("request").jsonObject), case)
         }
-    }
 
     private fun parseRequest(json: JsonObject) = Request(
         latitude = json.getValue("latitude").jsonPrimitive.double,
